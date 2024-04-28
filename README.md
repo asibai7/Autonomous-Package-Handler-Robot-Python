@@ -1,1 +1,1 @@
-# Autonomous-Package-Handler-Robot-Python
+This project implements a robot navigation system using a Raspberry Pi, 3 unreleased antennas madde by a company which I cannot disclose, a ultrasonic sensor, a pressure sensor, etc. The robot autonomously navigates from a docking station to a users location and vice versa all done using the antennas provided. 1 antenna is at the dock station, one at the user station, and the final antenna in the robot. 
