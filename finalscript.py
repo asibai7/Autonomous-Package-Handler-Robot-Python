@@ -209,6 +209,16 @@ def control_motors(direction):
     else:
         print("<<< wrong data >>>")
 
+#function which enables the robot to perform its move for a number of seconds before stopping
+def timed_move(seconds):
+    start_time = time()
+    while True:
+        time_ran = time() - start_time
+        if time_ran >= seconds: 
+            #robot stops when time is reached
+            control_motors('s')
+            break
+
 #function to check pressure sensor state
 def check_pressure_sensor():
     #setup GPIO pin for input
@@ -260,12 +270,7 @@ def read_and_process_serial_user(ser):
                             control_motors('s')
                             #robot turns left for 5 seconds then stops, which is approximately a 180 degree turn
                             control_motors('TL')
-                            start_time = time()
-                            while True:
-                                time_ran = time() - start_time
-                                if time_ran >= 5: 
-                                    control_motors('s')
-                                    break
+                            timed_move(5)
                             #exit function as robot is ready to execute dock mode
                             break
                         #if robot is further than 100 cm from the user antenna
@@ -278,36 +283,16 @@ def read_and_process_serial_user(ser):
                                 print("Object detected within 10 cm! Stopping motors.")
                                 #90 degrees turn left
                                 control_motors('L')
-                                start_time = time()
-                                while True:
-                                    time_ran = time() - start_time
-                                    if time_ran >= 4: 
-                                        control_motors('s')
-                                        break
+                                timed_move(4)
                                 #robot moves forward
                                 control_motors('f')
-                                start_time = time()
-                                while True:
-                                    time_ran = time() - start_time
-                                    if time_ran >= 3: 
-                                        control_motors('s')
-                                        break
+                                timed_move(3)
                                 #90 degrees turn right
                                 control_motors('R')
-                                start_time = time()
-                                while True:
-                                    time_ran = time() - start_time
-                                    if time_ran >= 4: 
-                                        control_motors('s')
-                                        break
+                                timed_move(4)
                                 #robot moves forward
                                 control_motors('f')
-                                start_time = time()
-                                while True:
-                                    time_ran = time() - start_time
-                                    if time_ran >= 3: 
-                                        control_motors('s')
-                                        break
+                                timed_move(3)
                             if last_processed_D_cm is None or abs(D_cm - last_processed_D_cm) >= D_CM_THRESHOLD:
                                 last_processed_D_cm = D_cm
                                 #if angle of arrival from antennas is less than -50 degrees, then turn right sharply to increase degrees
@@ -356,38 +341,18 @@ def read_and_process_serial_dock(ser):
                             if last_processed_LAoA_deg <= 0:
                                 #robot turns left
                                 control_motors('TL')
-                                start_time = time()
-                                while True: 
-                                    time_ran = time() - start_time
-                                    if time_ran >= 5:
-                                        control_motors('s')
-                                        break
+                                timed_move(5)
                                 #robot reverses into dock
                                 control_motors('b')
-                                start_time = time()
-                                while True:
-                                    time_ran = time() - start_time
-                                    if time_ran >= 9: 
-                                        control_motors('s')
-                                        break
+                                timed_move(9)
                             #180 degrees turn to the right if angle of arrival is more than 0
                             else:
                                 #robot turns right
                                 control_motors('TR')
-                                start_time = time()
-                                while True:
-                                    time_ran = time() - start_time
-                                    if time_ran >= 5: 
-                                        control_motors('s')
-                                        break
+                                timed_move(5)
                                 #robot reverses into dock
                                 control_motors('b')
-                                start_time = time()
-                                while True:
-                                    time_ran = time() - start_time
-                                    if time_ran >= 9: 
-                                        control_motors('s')
-                                        break
+                                timed_move(9)
                             #exit function as robot is back to starting position
                             break
                         #if robot is further than 95 cm from the dock antenna, then resume movement
@@ -398,34 +363,15 @@ def read_and_process_serial_dock(ser):
                             #if obstacle is detected within 20 cm, then robot avoids it using same movement as seen in read_and_process_serial_user function
                             if distance < 20:
                                 print("Object detected within 10 cm! Stopping motors.")
+                                #robot passes object by going around it
                                 control_motors('L')
-                                start_time = time()
-                                while True:
-                                    time_ran = time() - start_time
-                                    if time_ran >= 4: 
-                                        control_motors('s')
-                                        break
+                                timed_move(4)
                                 control_motors('f')
-                                start_time = time()
-                                while True: 
-                                    time_ran = time() - start_time
-                                    if time_ran >= 3: 
-                                        control_motors('s')
-                                        break
+                                timed_move(3)
                                 control_motors('R')
-                                start_time = time()
-                                while True: 
-                                    time_ran = time() - start_time
-                                    if time_ran >= 4: 
-                                        control_motors('s')
-                                        break
+                                timed_move(4)
                                 control_motors('f')
-                                start_time = time()
-                                while True: 
-                                    time_ran = time() - start_time
-                                    if time_ran >= 3: 
-                                        control_motors('s')
-                                        break
+                                timed_move(3)
                             #same action robot takes as read_and_process_serial_user function to try and get to the user antenna at an angle to ensure smooth reverse into starting position
                             if last_processed_D_cm is None or abs(D_cm - last_processed_D_cm) >= D_CM_THRESHOLD:
                                 last_processed_D_cm = D_cm
